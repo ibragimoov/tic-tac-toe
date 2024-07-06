@@ -1,0 +1,50 @@
+@import './variables.scss';
+
+.board {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 35px;
+
+  margin-bottom: 0;
+
+  &__row {
+    margin-bottom: -5px;
+  }
+
+  &__title {
+    margin-top: -10px;
+
+    font-size: 36px;
+    font-weight: bold;
+  }
+
+  &__madeby {
+    margin-bottom: -130px !important;
+  }
+
+  &__move {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    font-size: 30px;
+    margin-bottom: 10px;
+  }
+
+}
+
+@media (max-width: 1280px) {
+  .board {
+    flex-direction: column;
+    padding: 20px;
+
+    &__wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__row {
+      flex-wrap: wrap;
+    }
+  }
+}

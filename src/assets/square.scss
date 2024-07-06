@@ -1,0 +1,31 @@
+@import './variables.scss';
+
+.square {
+  border: 1px solid $black;
+
+  float: left;
+  font-size: 44px;
+  font-weight: bold;
+  line-height: 34px;
+
+  width: 120px;
+  height: 120px;
+
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+
+  text-align: center;
+
+  &:active {
+    border: 1px solid $black;
+  }
+
+  &:focus {
+  border: 1px solid $black;
+  }
+
+  &:hover {
+  border: 1px solid $black;
+  }
+}

@@ -1,0 +1,24 @@
+@import './base.scss';
+@import './square.scss';
+@import './board.scss';
+@import './variables.scss';
+
+body {
+  background-color: beige;
+}
+
+#app {
+  margin: 0 auto;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+}
