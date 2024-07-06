@@ -14,7 +14,7 @@ const isCurrentStepX = ref(true)
 
 const move = computed(() => {
   let status: string
-  const winner: number = store.calculateWinner(store.squares)
+  const winner: number | null = store.calculateWinner(store.squares)
 
   if (winner) {
     status = "Победил: " + String(winner ? 'Крестик' : 'Нолик');
