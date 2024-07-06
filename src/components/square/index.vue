@@ -5,7 +5,7 @@ import cross from '../../assets/icons/Cross.vue'
 import blox from '../../assets/icons/blox.vue'
 
 defineProps<{
-  value: string
+  value: string | null
 }>()
 
 const emit = defineEmits<{
@@ -19,11 +19,23 @@ const handleClick = () => {
 
 <template>
   <button @click="handleClick" class="square">
-    <cross v-if="value === 'X'" :width="60" :height="60" />
-    <blox v-if="value === 'O'" :width="60" :height="60" />
+    <transition>
+      <cross v-if="value === 'X'" :width="60" :height="60" />
+    </transition>
+    <transition>
+      <blox v-if="value === 'O'" :width="60" :height="60" />
+    </transition>
   </button>
 </template>
 
 <style lang="scss" scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
 
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
 </style>

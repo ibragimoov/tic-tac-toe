@@ -31,6 +31,23 @@
     margin-bottom: 10px;
   }
 
+  &__restart {
+    padding: 10px;
+
+    background-color: white;
+
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition: 0.5s all;
+
+    &:hover {
+      background-color: rgb(215, 215, 215);
+      transition: 0.5s all;
+    }
+  }
 }
 
 @media (max-width: 1280px) {
