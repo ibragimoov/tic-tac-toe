@@ -1,13 +1,27 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-type SquareValue =  'X' | 'O';
+export type SquareValue =  'X' | 'O';
 
 export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
-  const squares = ref<Array<any>>(Array(9).fill(null))
+  const squares = ref<Array<SquareValue>>(Array(9).fill(null))
+  const isCurrentStepX = ref(true)
 
   const allSquares = computed(() => {
     return squares.value
+  })
+
+  const winner = computed(() => {
+    const winnerValue = calculateWinner(squares.value)
+    return winnerValue !== null ? (winnerValue === 'X' ? 'Крестик' : 'Нолик') : null
+  })
+  
+  const currentPlayer = computed(() => {
+    return isCurrentStepX.value ? 'X' : 'O'
+  })
+  
+  const gameStatus = computed(() => {
+    return winner.value ? `Победил: ${winner.value}` : `Сейчас ходит: ${currentPlayer.value}`
   })
 
   const updateSquares = (indexSquare: number, value: SquareValue): void => {
@@ -16,9 +30,10 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
 
   const restartGame = () => {
     squares.value = Array(9).fill(null)
+    isCurrentStepX.value = true
   }
 
-  const calculateWinner = (squares: Array<number>): number | null => {
+  const calculateWinner = (squares: Array<SquareValue | null>): string | null => {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -38,5 +53,5 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
     return null
   }
 
-  return { squares, calculateWinner, allSquares, updateSquares, restartGame }
+  return { squares, calculateWinner, allSquares, updateSquares, restartGame, isCurrentStepX, winner, gameStatus, currentPlayer }
 })

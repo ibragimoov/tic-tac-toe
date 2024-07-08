@@ -1,10 +1,11 @@
 @import './base.scss';
-@import './square.scss';
-@import './board.scss';
 @import './variables.scss';
 
+@import './components/board.scss';
+@import './components/square.scss';
+
 body {
-  background-color: beige;
+  background-color: $background-color;
 }
 
 #app {
@@ -14,7 +15,6 @@ body {
 a {
   text-decoration: none !important;
 }
-
 
 @media (min-width: 1024px) {
   body {

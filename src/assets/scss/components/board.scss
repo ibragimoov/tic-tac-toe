@@ -1,5 +1,3 @@
-@import './variables.scss';
-
 .board {
   display: flex;
   flex-direction: row-reverse;
@@ -34,7 +32,7 @@
   &__restart {
     padding: 10px;
 
-    background-color: white;
+    background-color: $white;
 
     border: none;
     border-radius: 10px;
@@ -44,7 +42,7 @@
     transition: 0.5s all;
 
     &:hover {
-      background-color: rgb(215, 215, 215);
+      background-color: $button--hover;
       transition: 0.5s all;
     }
   }
