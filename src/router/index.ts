@@ -13,6 +13,7 @@ const routes = [
   { path: '/', name: 'main', component: HomePage },
   { path: '/home', component: HomePage },
   { path: '/game', component: TicTacToe },
+  { path: '/room/:id', component: TicTacToe },
   { path: '/create-room', component: CreateRoom },
   { path: '/:pathMatch(.*)*', component: () => import('@/pages/NotFound.vue') }
 ] satisfies readonly AppRouterRecord[]

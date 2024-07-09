@@ -1,5 +1,7 @@
 .create-room {
-
+  h1 {
+    margin-bottom: 30px;
+  }
 
   &__roles-list {
     display: flex;
@@ -91,15 +93,16 @@
     margin-left: auto;
     margin-right: auto;
     padding: 1rem;
-
+    
     width: 200px;
 
-    border-radius: 15px;
-
+    background-color: $main-menu--multiplayer-color;
+    
     font-size: 20px;
     color: $black;
-
+    
     border: none;
+    border-radius: 15px;
     
     transition: .3s all;
 

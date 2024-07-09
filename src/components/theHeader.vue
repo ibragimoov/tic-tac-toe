@@ -10,9 +10,9 @@
       <li class="navbar__list-item">
         <router-link to="/about">О нас</router-link>
       </li>
-      <button class="navbar__list-item--auth">
+      <!-- <button class="navbar__list-item--auth">
         <router-link to="/contact">Войти</router-link>
-      </button>
+      </button> -->
     </ul>
   </nav>
 </template>
