@@ -4,9 +4,19 @@
   </svg>
 </template>
 
-<script setup lang="ts">
-defineProps<{
-  width: number;
-  height: number;
-}>()
+<script>
+export default {
+  props: {
+    width: {
+      type: Number,
+      required: true,
+      default: () => 60
+    },
+    height: {
+      type: Number,
+      required: true,
+      default: () => 60
+    }
+  }
+}
 </script>
