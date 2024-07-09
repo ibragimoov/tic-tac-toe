@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue"
 
-import cross from '../assets/icons/Cross.vue'
-import blox from '../assets/icons/Blox.vue'
+import cross from './icons/Cross.vue'
+import blox from './icons/Blox.vue'
 
 defineProps<{
   value: string | null
