@@ -2,7 +2,7 @@
 import { ref } from "vue"
 
 import cross from '../assets/icons/Cross.vue'
-import blox from '../assets/icons/Blox.vue'
+import * as blox from '../assets/icons/Blox.vue'
 
 defineProps<{
   value: string | null
