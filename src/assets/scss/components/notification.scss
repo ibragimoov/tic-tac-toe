@@ -1,0 +1,34 @@
+.notifications {
+  position: fixed;
+
+  top: 10px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  z-index: 1000;
+
+  &__message {
+    padding: 10px;
+    margin-bottom: 10px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    &--success {
+      background-color: #4caf50;
+      color: white;
+    }
+    
+    &--error {
+      background-color: #f44336;
+      color: white;
+    }
+  
+    &--info {
+      background-color: #2196f3;
+      color: white;
+    }
+  }
+}

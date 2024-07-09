@@ -1,27 +1,33 @@
 <script setup lang="ts">
-// core
-import { useTicTacToeStore } from '../stores/game'
+import { watch, inject, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { SquareValue } from '../stores/game'
 
-// components
+import { useTicTacToeStore } from '../stores/game'
+import type { WinnerValue, SquareValue } from '../stores/game'
+import type { NotificationType } from '../plugins/notification'
+
 import SquareBlock from './squareBlock.vue'
 
-// store
 const store = useTicTacToeStore()
-const { isCurrentStepX, winner, currentPlayer, gameStatus } = storeToRefs(store)
+const { isCurrentStepX, winner, gameStatus, gameOver } = storeToRefs(store)
 
-// actions
+const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
+
 const handleSquareClick = (indexSquare: number) => {
-  const square = store.squares[indexSquare]
-  if (square || store.calculateWinner(store.squares)) {
+  if (gameOver.value || store.squares[indexSquare]) {
     return
   }
 
   const currentValue: SquareValue = isCurrentStepX.value ? 'X' : 'O'
   store.updateSquares(indexSquare, currentValue)
-  isCurrentStepX.value = !isCurrentStepX.value
 }
+
+watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
+  if (newVal) {
+    const winnerMessage = `Игра окончена, ${newVal} победил 😎`
+    addNotification(winnerMessage, 'success')
+  }
+})
 </script>
 
 <template>
@@ -33,9 +39,9 @@ const handleSquareClick = (indexSquare: number) => {
         {{ gameStatus }}
       </h3>
       <button
-        v-if="winner" 
+        v-if="gameOver" 
         class="board__restart"
-        @click="() => store.restartGame()"
+        @click="store.restartGame"
       >
         Перезапустить игру
       </button>
@@ -62,7 +68,3 @@ const handleSquareClick = (indexSquare: number) => {
     </div> 
   </div>
 </template>
-
-<style lang="scss" scoped>
-
-</style>
