@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue"
 
-import cross from './icons/Cross.vue'
-import blox from './icons/Blox.vue'
+import cross from './icons/CrossIcon.vue'
+import circleIcon from './icons/CircleIcon.vue'
 
 defineProps<{
   value: string | null
@@ -23,7 +23,7 @@ const handleClick = () => {
       <cross v-if="value === 'X'" :width="60" :height="60" />
     </transition>
     <transition>
-      <blox v-if="value === 'O'" :width="60" :height="60" />
+      <circle-icon v-if="value === 'O'" :width="60" :height="60" />
     </transition>
   </button>
 </template>

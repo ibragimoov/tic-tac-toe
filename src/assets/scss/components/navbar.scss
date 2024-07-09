@@ -1,0 +1,58 @@
+.navbar {
+  position: fixed;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+
+  &__list {
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+
+    &-item {
+      font-size: 18px;
+
+      a {
+        color: $black;
+        padding-bottom: 10px;
+
+        transition: border-bottom 0.2s ease;
+        border-bottom: 3px solid transparent;
+
+        &:hover {
+          border-bottom: 3px solid $black;
+        }
+      }
+
+      &--auth {
+        padding: 10px;
+        padding-left: 20px;
+        padding-right: 20px;
+
+        border-radius: 10px;
+        border: 1px solid $black;
+
+        font-size: 18px;
+
+        background-color: transparent;
+
+        transition: .5s all;
+
+        cursor: pointer;
+
+        a {
+          color: $black;
+        }
+
+        &:hover {
+          background-color: $black;
+          transition: .5s all;
+
+          a {
+            color: $white;
+          }
+        }
+      }
+    }
+  }
+}

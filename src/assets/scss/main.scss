@@ -4,6 +4,9 @@
 @import './components/board.scss';
 @import './components/square.scss';
 @import './components/notification.scss';
+@import './components/navbar.scss';
+@import './components/choosing-menu.scss';
+@import './components/create-room.scss';
 
 body {
   background-color: $background-color;
@@ -15,6 +18,31 @@ body {
 
 a {
   text-decoration: none !important;
+}
+
+li {
+  list-style: none;
+}
+
+.title {
+  text-align: center;
+
+  font-size: 46px;
+  font-weight: bold;
+}
+
+.description {
+  text-align: center;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  max-width: 500px;
+
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @media (min-width: 1024px) {
