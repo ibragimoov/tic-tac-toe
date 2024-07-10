@@ -10,7 +10,7 @@ export const state = reactive({
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = process.env.NODE_ENV || "http://localhost:3000";
 
-export const socket = io("http://localhost:3000", { transports: ['websocket'] });
+export const socket = io("http://192.168.88.248:3000", { transports: ['websocket'] });
 
 socket.on("connect", () => {
   state.connected = true;

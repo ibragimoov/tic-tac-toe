@@ -7,6 +7,7 @@
 @import './components/navbar.scss';
 @import './components/choosing-menu.scss';
 @import './components/create-room.scss';
+@import './components/room.scss';
 
 body {
   background-color: $background-color;
@@ -117,4 +118,9 @@ li {
   width: 9rem;
  
   transform: scale(-1, 1);
+}
+
+.disabled {
+  background-color: $light-gray;
+  color: $white;
 }

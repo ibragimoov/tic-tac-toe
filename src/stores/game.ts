@@ -1,54 +1,65 @@
-import { ref, computed } from 'vue';
-import { defineStore } from 'pinia';
+import { ref, computed } from 'vue'
+import { defineStore } from 'pinia'
 
-export type SquareValue = 'X' | 'O' | null;
-export type WinnerValue = 'Крестик' | 'Нолик' | 'Ничья' | null;
+// types
+export type SquareValue = 'X' | 'O' | null
+export type WinnerValue = 'Крестик' | 'Нолик' | 'Ничья' | null
 
 export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
-  const squares = ref<Array<SquareValue>>(Array(9).fill(null));
-  const isCurrentStepX = ref(true);
+  // state
+  const squares = ref<Array<SquareValue>>(Array(9).fill(null))
+  const isCurrentStepX = ref<Boolean>(true)
+  const currentPlayerSocketId = ref<string | null>(null)
 
-  const allSquares = computed(() => {
-    return squares.value;
-  });
+  // computed
+  const allSquares = computed(() => squares.value)
 
   const winner = computed<WinnerValue>(() => {
-    const winnerValue = calculateWinner(squares.value);
-    return winnerValue !== null ? (winnerValue === 'X' ? 'Крестик' : 'Нолик') : null;
-  });
+    const winnerValue = calculateWinner(squares.value)
+    return winnerValue !== null ? (winnerValue === 'X' ? 'Крестик' : 'Нолик') : null
+  })
 
-  const currentPlayer = computed(() => {
-    return isCurrentStepX.value ? 'X' : 'O';
-  });
+  const currentPlayer = computed(() => (isCurrentStepX.value ? 'X' : 'O'))
 
   const gameStatus = computed(() => {
-    if (winner.value) {
-      return `Победил: ${winner.value}`;
-    } else if (isDraw.value) {
-      return 'Ничья';
-    } else {
-      return `Сейчас ходит: ${currentPlayer.value}`;
-    }
-  });
+    if (winner.value) return `Победил: ${winner.value}` 
+    if (isDraw.value) return 'Ничья'
+    else return `Сейчас ходит: ${currentPlayer.value}`
+  })
 
   const isDraw = computed(() => {
-    return squares.value.every(square => square !== null) && !winner.value;
-  });
+    const isBoardFull = squares.value.every(square => square !== null)
+    return isBoardFull && !winner.value
+  })
 
-  const gameOver = computed(() => {
-    return winner.value !== null || isDraw.value;
-  });
+  const gameOver = computed(() => (
+    winner.value !== null || isDraw.value
+  ))
 
-  const updateSquares = (indexSquare: number, value: SquareValue): void => {
-    if (gameOver.value || squares.value[indexSquare]) return;
-    squares.value[indexSquare] = value;
-    isCurrentStepX.value = !isCurrentStepX.value;
-  };
+  // actions
+  const updateSquares = (indexSquare: number, value: SquareValue, socketId: string): void => {
+    if (squares.value[indexSquare] !== value) {
+      squares.value[indexSquare] = value
+    }
+
+    isCurrentStepX.value = !isCurrentStepX.value
+    currentPlayerSocketId.value = socketId
+  }
+
+  const setBoardState = (boardState: Array<SquareValue>, currentStepX: boolean, socketId: string): void => {
+    const areEqual = JSON.stringify(squares.value) === JSON.stringify(boardState)
+    if (!areEqual) {
+      squares.value = [...boardState]
+    }
+
+    isCurrentStepX.value = currentStepX
+    currentPlayerSocketId.value = socketId || null
+  }
 
   const restartGame = () => {
-    squares.value = Array(9).fill(null);
-    isCurrentStepX.value = true;
-  };
+    isCurrentStepX.value = true
+    currentPlayerSocketId.value = null
+  }
 
   const calculateWinner = (squares: Array<SquareValue>): string | null => {
     const lines = [
@@ -60,15 +71,28 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
       [2, 5, 8],
       [0, 4, 8],
       [2, 4, 6]
-    ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
+    ]
+    for (const [a, b, c] of lines) {
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return squares[a]
       }
     }
-    return null;
-  };
+    return null
+  }
 
-  return { squares, calculateWinner, allSquares, updateSquares, restartGame, isCurrentStepX, winner, gameStatus, currentPlayer, isDraw, gameOver };
-});
+  return {
+    squares,
+    calculateWinner,
+    allSquares,
+    updateSquares,
+    setBoardState,
+    restartGame,
+    isCurrentStepX,
+    winner,
+    gameStatus,
+    currentPlayer,
+    isDraw,
+    gameOver,
+    currentPlayerSocketId
+  }
+})

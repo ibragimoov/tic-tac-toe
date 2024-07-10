@@ -7,11 +7,11 @@ import notificationPlugin from './plugins/notification'
 import { router } from './router/index'
 
 import App from './App.vue'
-
+  
 const app = createApp(App)
+app.use(notificationPlugin)
 
 app.use(router)
-app.use(notificationPlugin)
 app.use(createPinia())
 
 app.mount('#app')

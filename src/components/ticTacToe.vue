@@ -1,25 +1,55 @@
 <script setup lang="ts">
-import { watch, inject, onMounted } from 'vue'
+import { watch, inject } from 'vue'
 import { storeToRefs } from 'pinia'
-
-import { useTicTacToeStore } from '../stores/game'
-import type { WinnerValue, SquareValue } from '../stores/game'
-import type { NotificationType } from '../plugins/notification'
 
 import SquareBlock from './squareBlock.vue'
 
+import { socket } from '../socket'
+
+import { useTicTacToeStore } from '../stores/game'
+import type { WinnerValue, SquareValue } from '../stores/game'
+
+import type { NotificationType } from '../plugins/notification'
+
+const props = defineProps({
+  players: {
+    type: Array,
+    required: true,
+  },
+  roomId: {
+    type: Number,
+    required: false
+  }
+})
+
 const store = useTicTacToeStore()
-const { isCurrentStepX, winner, gameStatus, gameOver } = storeToRefs(store)
+const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, currentPlayerSocketId } = storeToRefs(store)
 
 const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
 
+const handleRestartGame = () => {
+  socket.emit('restartGame', { roomId: props.roomId })
+  store.restartGame()
+}
+
 const handleSquareClick = (indexSquare: number) => {
-  if (gameOver.value || store.squares[indexSquare]) {
-    return
-  }
+  const isCurrentPlayerExist = currentPlayerSocketId.value !== null && currentPlayerSocketId.value !== socket.id
+  if (isCurrentPlayerExist) { return }
+
+  const isGameEnded = gameOver.value || store.squares[indexSquare]
+  if (isGameEnded) { return }
 
   const currentValue: SquareValue = isCurrentStepX.value ? 'X' : 'O'
-  store.updateSquares(indexSquare, currentValue)
+
+  socket.emit('makeMove', { 
+    roomId: props.roomId, 
+    index: indexSquare, 
+    move: currentValue, 
+    player: props.players[isCurrentStepX.value ? 0 : 1], 
+    socketId: socket.id
+  })
+
+  // store.updateSquares(indexSquare, currentValue, socket.id)
 }
 
 watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
@@ -27,6 +57,14 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
     const winnerMessage = `Игра окончена, ${newVal} победил 😎`
     addNotification(winnerMessage, 'success')
   }
+})
+
+socket.on('moveMade', (data: { index: number, player: SquareValue, socketId: string }) => {
+  store.updateSquares(data.index, data.player, data.socketId)
+})
+
+socket.on('gameStateUpdate', (data: { boardState: Array<'X' | 'O' | null>, currentStepX: boolean, socketId: string }) => {
+  store.setBoardState(data.boardState, data.currentStepX, data.socketId)
 })
 </script>
 
@@ -41,7 +79,7 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
       <button
         v-if="gameOver" 
         class="board__restart"
-        @click="store.restartGame"
+        @click="() => handleRestartGame()"
       >
         Перезапустить игру
       </button>
