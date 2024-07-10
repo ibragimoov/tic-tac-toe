@@ -49,7 +49,7 @@ const handleSquareClick = (indexSquare: number) => {
     socketId: socket.id
   })
 
-  // store.updateSquares(indexSquare, currentValue, socket.id)
+  store.updateSquares(indexSquare, currentValue, String(socket.id))
 }
 
 watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
@@ -60,7 +60,9 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
 })
 
 socket.on('moveMade', (data: { index: number, player: SquareValue, socketId: string }) => {
-  store.updateSquares(data.index, data.player, data.socketId)
+  if (data.socketId !== socket.id) {
+    store.updateSquares(data.index, data.player, data.socketId)
+  }
 })
 
 socket.on('gameStateUpdate', (data: { boardState: Array<'X' | 'O' | null>, currentStepX: boolean, socketId: string }) => {
