@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { socket } from '@/socket'
 
 // types
 export type SquareValue = 'X' | 'O' | null
@@ -38,6 +39,9 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
 
   // actions
   const updateSquares = (indexSquare: number, value: SquareValue, socketId: string): void => {
+    const isCurrentPlayerExist = currentPlayerSocketId.value !== null && currentPlayerSocketId.value !== socket.id
+    if (isCurrentPlayerExist) { return }
+
     if (squares.value[indexSquare] !== value) {
       squares.value[indexSquare] = value
     }

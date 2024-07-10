@@ -41,6 +41,8 @@ const handleSquareClick = (indexSquare: number) => {
 
   const currentValue: SquareValue = isCurrentStepX.value ? 'X' : 'O'
 
+  console.log(currentPlayerSocketId.value, socket.id)
+
   socket.emit('makeMove', { 
     roomId: props.roomId, 
     index: indexSquare, 
