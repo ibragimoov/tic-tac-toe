@@ -40,8 +40,8 @@ const route = useRoute()
 const router = useRouter()
 const isJoined = ref(false)
 const username = ref('')
-const playerX = ref(null)
-const playerO = ref(null)
+const playerX = ref<{username: string} | null>(null)
+const playerO = ref<{username: string} | null>(null)
 
 const joinRoom = () => {
   const roomId = route.params.id
