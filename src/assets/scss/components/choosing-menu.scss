@@ -33,4 +33,20 @@
   &--multiplayer {
     background-color: $main-menu--multiplayer-color
   }
+  
+  @media (max-width: 1280px) {
+    flex-direction: column;
+    align-items: center;
+
+    padding-left: 20px;
+    padding-right: 20px;
+
+    a {
+      width: 100%;
+    }
+
+    &--one, &--multiplayer {
+      width: 100%;
+    }
+  }
 }

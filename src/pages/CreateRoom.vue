@@ -15,6 +15,10 @@
       </div>
     </div>
 
+    <div class="loader" v-if="isLoading">
+      <vue-loaders-pacman color="red"/>
+    </div>
+
     <button 
       :disabled="!isFormValid" 
       :class="{ disabled: !isFormValid }" 
@@ -39,6 +43,7 @@ import type { SquareValue } from '../stores/game'
 
 const role = ref<SquareValue>(null)
 const username = ref<string>('')
+const isLoading = ref<boolean>(false)
 
 const isFormValid = computed(() => {
   return username.value.length && role.value
@@ -55,11 +60,13 @@ const handleSelectRole = (value: SquareValue) => {
 }
 
 const handleCreateGame = () => {
+  isLoading.value = true
   socket.emit('createUser', { username: username.value })
   socket.emit('createRoom', { username: username.value, role: role.value, socketId: socket.id })
 }
 
 socket.on('roomCreated', (room) => {
+  isLoading.value = false
   router.push(`/room/${room.id}`)
 })
 </script>

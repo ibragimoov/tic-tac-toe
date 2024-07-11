@@ -1,9 +1,12 @@
 <template>
   <div>
-    <div v-if="!isJoined">
+    <div class="room" v-if="!isJoined">
       <h1 class="title">Присоединение в комнату</h1>
       <h3 style="margin-top: 20px">Введите ваш ник:</h3>
       <input v-model="username" maxlength="20" class="input__input" placeholder="Ваш ник" />
+      <div class="loader" v-if="isLoading">
+        <vue-loaders-pacman color="red"/>
+      </div>
       <button class="create-room__submit" @click="joinRoom" :disabled="!username">Присоединиться</button>
     </div>
     <div v-else>
@@ -43,7 +46,10 @@ const username = ref('')
 const playerX = ref<{username: string} | null>(null)
 const playerO = ref<{username: string} | null>(null)
 
+const isLoading = ref<boolean>(false)
+
 const joinRoom = () => {
+  isLoading.value = true
   const roomId = route.params.id
   socket.emit('joinRoom', { roomId, username: username.value, role: 'X or O', socketId: socket.id })
 }
@@ -56,6 +62,7 @@ socket.on('playerJoined', async (room) => {
 })
 
 socket.on('joinRoomResponse', ({ success, room }) => {
+  isLoading.value = false
   if (success) {
     playerX.value = room.playerX
     playerO.value = room.playerO

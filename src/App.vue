@@ -6,6 +6,9 @@ import theHeader from './components/theHeader.vue'
 <template>
   <notification-block />
 
+  <router-link to="/">
+    <h1 class="logo">#</h1>
+  </router-link>
   <the-header />
   <router-view />
 

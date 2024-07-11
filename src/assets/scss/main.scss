@@ -15,6 +15,7 @@ body {
 
 #app {
   margin: 0 auto;
+  margin-top: 0;
 }
 
 a {
@@ -81,7 +82,10 @@ li {
   opacity: 0;
 }
 
-
+.loader {
+  display: flex;
+  justify-content: center;
+}
 
 .image--top-right {
   position: absolute;
@@ -123,4 +127,57 @@ li {
 .disabled {
   background-color: $light-gray;
   color: $white;
+}
+
+.logo {
+  display: none;
+}
+
+@media (max-width: 1280px) {
+  #app {
+    margin-top: 20px;
+  }
+
+  .title {
+    font-size: 33px;
+    max-width: 250px;
+
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .description {
+    font-size: 15px;
+    max-width: 250px;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .image--top-right {
+    width: 20%;
+    right: 0;
+  }
+  
+  .image--top-left {
+    width: 15%;
+  }
+   
+  .image--bottom-left {
+    width: 30%;
+  }
+   
+  .image--bottom-right {
+    width: 20%;
+  }
+
+  .logo {
+    display: block;
+
+    font-size: 40px;
+    text-align: center;
+    color: $blue;
+  
+    cursor: pointer;
+  }
 }

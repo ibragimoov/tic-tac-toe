@@ -36,4 +36,29 @@
       background-color: $blue;
     }
   }
+
+}
+
+@media (max-width: 1280px) {
+  .room {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .players {
+    flex-direction: column;
+    gap: 10px;
+
+    padding-left: 20px;
+    padding-right: 20px;
+
+    margin-bottom: 10px;
+
+    &__item {
+
+      &--x, &--o {
+        width: 100%;
+      }
+    }
+  }
 }
