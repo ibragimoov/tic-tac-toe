@@ -31,7 +31,8 @@
   }
 
   &--multiplayer {
-    background-color: $main-menu--multiplayer-color
+    background-color: $main-menu--multiplayer-color;
+    color: $black !important;
   }
   
   @media (max-width: 1280px) {

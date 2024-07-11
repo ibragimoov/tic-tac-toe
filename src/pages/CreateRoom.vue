@@ -19,10 +19,10 @@
       <vue-loaders-pacman color="red"/>
     </div>
 
-    <button 
-      :disabled="!isFormValid" 
-      :class="{ disabled: !isFormValid }" 
-      @click="() => handleCreateGame()" 
+    <button
+      :disabled="!isFormValid && isLoading"
+      :class="{ disabled: !isFormValid }"
+      @click="() => handleCreateGame()"
       class="create-room__submit"
     >
       {{ submitButtonText }}

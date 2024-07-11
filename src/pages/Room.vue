@@ -1,13 +1,16 @@
 <template>
   <div>
-    <div class="room" v-if="!isJoined">
+    <div class="loader loader--create-room" v-if="!isRoomResponse">
+      <vue-loaders-pacman scale="2" color="red"/>
+    </div>
+    <div class="room" v-else-if="!isJoined">
       <h1 class="title">Присоединение в комнату</h1>
       <h3 style="margin-top: 20px">Введите ваш ник:</h3>
       <input v-model="username" maxlength="20" class="input__input" placeholder="Ваш ник" />
       <div class="loader" v-if="isLoading">
         <vue-loaders-pacman color="red"/>
       </div>
-      <button class="create-room__submit" @click="joinRoom" :disabled="!username">Присоединиться</button>
+      <button class="create-room__submit" @click="joinRoom" :disabled="!username && isLoading">Присоединиться</button>
     </div>
     <div v-else>
       <div class="players">
@@ -47,6 +50,7 @@ const playerX = ref<{username: string} | null>(null)
 const playerO = ref<{username: string} | null>(null)
 
 const isLoading = ref<boolean>(false)
+const isRoomResponse = ref<boolean>(false)
 
 const joinRoom = () => {
   isLoading.value = true
@@ -56,6 +60,7 @@ const joinRoom = () => {
 
 socket.on('playerJoined', async (room) => {
   isJoined.value = true
+  isRoomResponse.value = true
 
   playerX.value = room.playerX
   playerO.value = room.playerO
@@ -63,6 +68,7 @@ socket.on('playerJoined', async (room) => {
 
 socket.on('joinRoomResponse', ({ success, room }) => {
   isLoading.value = false
+  isRoomResponse.value = true
   if (success) {
     playerX.value = room.playerX
     playerO.value = room.playerO
@@ -79,6 +85,8 @@ socket.on('getRoomResponse', ({ success, room }) => {
     playerX.value = room.playerX
     playerO.value = room.playerO
 
+    isRoomResponse.value = true
+
     const isPlayerHost = room.socketIdX === socket.id || room.socketIdO === socket.id
     if (isPlayerHost)  isJoined.value = true
   } else {
@@ -91,3 +99,10 @@ onMounted(() => {
   socket.emit('getRoom', { roomId })
 })
 </script>
+
+<style scoped>
+.loader--create-room {
+  margin-top: 50%;
+  transform: translateY(+100%);
+}
+</style>
