@@ -6,11 +6,11 @@
     <div class="room" v-else-if="!isJoined">
       <h1 class="title">Присоединение в комнату</h1>
       <h3 style="margin-top: 20px">Введите ваш ник:</h3>
-      <input v-model="username" maxlength="20" class="input__input" placeholder="Ваш ник" />
+      <input v-model="username" @keypress.enter="joinRoom" maxlength="20" class="input__input" placeholder="Ваш ник" />
       <div class="loader" v-if="isLoading">
         <vue-loaders-pacman color="red"/>
       </div>
-      <button class="create-room__submit" @click="joinRoom" :disabled="!username && isLoading">Присоединиться</button>
+      <button class="create-room__submit"@click="joinRoom" :disabled="!username && isLoading">Присоединиться</button>
     </div>
     <div v-else>
       <div class="players">

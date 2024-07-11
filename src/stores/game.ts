@@ -38,22 +38,30 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
   ))
 
   // actions
-  const updateSquares = (indexSquare: number, value: SquareValue, socketId: string): void => {
+  const updateSquares = (indexSquare: number, value: SquareValue, currentStepX: boolean, socketId: string): void => {
+    console.log('before ', isCurrentStepX.value, currentPlayerSocketId.value)
     const isCurrentPlayerExist = currentPlayerSocketId.value !== null && currentPlayerSocketId.value !== socket.id
     if (isCurrentPlayerExist) { return }
 
     if (squares.value[indexSquare] !== value) {
-      squares.value[indexSquare] = value
+      squares.value.splice(indexSquare, 1, value)
     }
 
-    isCurrentStepX.value = !isCurrentStepX.value
-    currentPlayerSocketId.value = socketId
+    isCurrentStepX.value = currentStepX
+    currentPlayerSocketId.value = socketId === socket.id ? null : socketId
+
+    console.log('after ', isCurrentStepX.value, currentPlayerSocketId.value)
   }
 
   const setBoardState = (boardState: Array<SquareValue>, currentStepX: boolean, socketId: string): void => {
-    const areEqual = JSON.stringify(squares.value) === JSON.stringify(boardState)
+    const areEqual = JSON.stringify(squares.value.slice()) === JSON.stringify(boardState)
     if (!areEqual) {
-      squares.value = [...boardState]
+      if (boardState.length < 9) {
+        const nullsToAdd = 9 - boardState.length
+        boardState = boardState.concat(Array(nullsToAdd).fill(null))
+      }
+
+      squares.value = boardState.slice()
     }
 
     isCurrentStepX.value = currentStepX

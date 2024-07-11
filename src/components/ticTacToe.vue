@@ -33,6 +33,12 @@ const handleRestartGame = () => {
 }
 
 const handleSquareClick = (indexSquare: number) => {
+  if (!props.players[0] || !props.players[1]) { return }
+
+  if (socket.id !== currentPlayerSocketId.value) {
+    return
+  }
+
   const isCurrentPlayerExist = currentPlayerSocketId.value !== null && currentPlayerSocketId.value !== socket.id
   if (isCurrentPlayerExist) { return }
 
@@ -41,7 +47,8 @@ const handleSquareClick = (indexSquare: number) => {
 
   const currentValue: SquareValue = isCurrentStepX.value ? 'X' : 'O'
 
-  console.log(currentPlayerSocketId.value, socket.id)
+  console.log(socket.id)
+  console.log(currentPlayerSocketId.value)
 
   socket.emit('makeMove', { 
     roomId: props.roomId, 
@@ -51,7 +58,7 @@ const handleSquareClick = (indexSquare: number) => {
     socketId: socket.id
   })
 
-  store.updateSquares(indexSquare, currentValue, String(socket.id))
+  store.updateSquares(indexSquare, currentValue, isCurrentStepX.value ? false : true, String(socket.id))
 }
 
 watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
@@ -61,14 +68,19 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
   }
 })
 
-socket.on('moveMade', (data: { index: number, player: SquareValue, socketId: string }) => {
-  if (data.socketId !== socket.id) {
-    store.updateSquares(data.index, data.player, data.socketId)
+socket.on('moveMade', (data: { index: number, move: SquareValue, isCurrentStepX: boolean, socketId: string }) => {
+  store.updateSquares(data.index, data.move, data.isCurrentStepX, data.socketId)
+})
+
+socket.on('gameStateUpdate', (data: { boardState: Array<'X' | 'O' | null>, currentStepX: boolean, socketId: string, isRestart: boolean }) => {
+  const isUpdateGameStateToAnotherPlayer = data.socketId === socket.id
+  if (isUpdateGameStateToAnotherPlayer || data.isRestart) {
+    store.setBoardState(data.boardState, data.currentStepX, data.socketId)
   }
 })
 
-socket.on('gameStateUpdate', (data: { boardState: Array<'X' | 'O' | null>, currentStepX: boolean, socketId: string }) => {
-  store.setBoardState(data.boardState, data.currentStepX, data.socketId)
+socket.on('getPlayerFirstMove', ({ socketId }) => {
+  currentPlayerSocketId.value = socketId
 })
 </script>
 
