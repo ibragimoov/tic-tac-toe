@@ -6,17 +6,14 @@ import { socket } from '../socket'
 import type { Player } from './tic-tac-toe.service'
 
 export const useRoom = () => {
-  // Состояние
   const isJoined = ref(false)
   const isRoomResponse = ref(false)
   const playerX = ref<Player>({} as Player)
   const playerO = ref<Player>({} as Player)
   const isLoading = ref(false)
 
-  // Инициализация роутера
   const router = useRouter()
 
-  // Функции для работы с WebSocket
   const initializeRoom = (roomId: string | string[]) => {
     console.log(roomId)
     socket.emit('getRoom', { roomId })
@@ -28,7 +25,6 @@ export const useRoom = () => {
     console.log(roomId, username, 'X or O', socket.id)
   }
 
-  // Обработчики событий
   socket.on('playerJoined', (room) => {
     isJoined.value = true
     isRoomResponse.value = true

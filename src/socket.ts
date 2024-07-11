@@ -7,10 +7,9 @@ export const state = reactive({
   barEvents: []
 });
 
-const URL = process.env.NODE_ENV || "http://localhost:3000";
+const URL = process.env.API_URL || "http://192.168.88.248:3000";
 
-// export const socket = io("https://tic-tac-toe-server-v8ld.onrender.com/", { transports: ['websocket'] });
-export const socket = io("http://192.168.88.248:3000", { transports: ['websocket'] });
+export const socket = io(URL, { transports: ['websocket'] });
 
 socket.on("connect", () => {
   state.connected = true;
