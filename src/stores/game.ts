@@ -39,7 +39,6 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
 
   // actions
   const updateSquares = (indexSquare: number, value: SquareValue, currentStepX: boolean, socketId: string): void => {
-    console.log('before ', isCurrentStepX.value, currentPlayerSocketId.value)
     const isCurrentPlayerExist = currentPlayerSocketId.value !== null && currentPlayerSocketId.value !== socket.id
     if (isCurrentPlayerExist) { return }
 
@@ -49,8 +48,6 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
 
     isCurrentStepX.value = currentStepX
     currentPlayerSocketId.value = socketId === socket.id ? null : socketId
-
-    console.log('after ', isCurrentStepX.value, currentPlayerSocketId.value)
   }
 
   const setBoardState = (boardState: Array<SquareValue>, currentStepX: boolean, socketId: string): void => {

@@ -29,8 +29,16 @@
     margin-bottom: 10px;
   }
 
+  &__info-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
   &__restart {
     padding: 10px;
+
+    height: 50px;
 
     background-color: $white;
 
@@ -46,6 +54,36 @@
     &:hover {
       background-color: $button--hover;
       transition: 0.5s all;
+    }
+  }
+
+  &__copy {
+    padding: 8px;
+
+    height: 50px;
+
+    background-color: transparent;
+
+    border: 2px solid $light-gray;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition: .5s all;
+
+    &:hover {
+      background-color: $light-gray;
+      border: 2px solid transparent;
+
+      color: $white;
+
+      transition: .5s all;
+    }
+
+    &:active {
+      background-color: $gray;
+
+      transition: .2s all;
     }
   }
 }

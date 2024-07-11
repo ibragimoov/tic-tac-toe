@@ -2,63 +2,53 @@
 import { watch, inject } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import SquareBlock from './squareBlock.vue'
-
-import { socket } from '../socket'
-
-import { useTicTacToeStore } from '../stores/game'
 import type { WinnerValue, SquareValue } from '../stores/game'
+import { useTicTacToeStore } from '../stores/game'
+
+import { useTicTacToe } from '../services/tic-tac-toe.service'
+import { useCopyToClipboard } from '../services/clipboard.service'
+import type { Player } from '../services/tic-tac-toe.service'
+
+import SquareBlock from './squareBlock.vue'
 
 import type { NotificationType } from '../plugins/notification'
 
 const props = defineProps({
   players: {
-    type: Array,
+    type: Array<Player>,
     required: true,
   },
   roomId: {
     type: Number,
-    required: false
+    required: true
   }
 })
 
 const store = useTicTacToeStore()
 const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, currentPlayerSocketId } = storeToRefs(store)
-
+const { handleMakeMove, handleRestartGame, isMoveValid } = useTicTacToe()
+const { copyToClipboard, isCopied } = useCopyToClipboard()
 const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
 
-const handleRestartGame = () => {
-  socket.emit('restartGame', { roomId: props.roomId })
-  store.restartGame()
+const handleRestartClick = () => {
+  handleRestartGame(String(props.roomId))
 }
 
 const handleSquareClick = (indexSquare: number) => {
-  if (!props.players[0] || !props.players[1]) { return }
-
-  if (socket.id !== currentPlayerSocketId.value) {
+  if (!isMoveValid(indexSquare, props.players[0], props.players[1])) {
     return
   }
 
-  const isCurrentPlayerExist = currentPlayerSocketId.value !== null && currentPlayerSocketId.value !== socket.id
-  if (isCurrentPlayerExist) { return }
-
-  const isGameEnded = gameOver.value || store.squares[indexSquare]
-  if (isGameEnded) { return }
-
   const currentValue: SquareValue = isCurrentStepX.value ? 'X' : 'O'
 
-  console.log(socket.id)
-  console.log(currentPlayerSocketId.value)
-
-  socket.emit('makeMove', { 
+  const moveObj = { 
     roomId: props.roomId, 
     index: indexSquare, 
     move: currentValue, 
-    player: props.players[isCurrentStepX.value ? 0 : 1], 
-    socketId: socket.id
-  })
-
-  store.updateSquares(indexSquare, currentValue, isCurrentStepX.value ? false : true, String(socket.id))
+    player: props.players[isCurrentStepX.value ? 0 : 1].username
+  }
+  
+  handleMakeMove(moveObj)
 }
 
 watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
@@ -66,21 +56,6 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
     const winnerMessage = `Игра окончена, ${newVal} победил 😎`
     addNotification(winnerMessage, 'success')
   }
-})
-
-socket.on('moveMade', (data: { index: number, move: SquareValue, isCurrentStepX: boolean, socketId: string }) => {
-  store.updateSquares(data.index, data.move, data.isCurrentStepX, data.socketId)
-})
-
-socket.on('gameStateUpdate', (data: { boardState: Array<'X' | 'O' | null>, currentStepX: boolean, socketId: string, isRestart: boolean }) => {
-  const isUpdateGameStateToAnotherPlayer = data.socketId === socket.id
-  if (isUpdateGameStateToAnotherPlayer || data.isRestart) {
-    store.setBoardState(data.boardState, data.currentStepX, data.socketId)
-  }
-})
-
-socket.on('getPlayerFirstMove', ({ socketId }) => {
-  currentPlayerSocketId.value = socketId
 })
 </script>
 
@@ -92,13 +67,18 @@ socket.on('getPlayerFirstMove', ({ socketId }) => {
       <h3 class="board__move">
         {{ gameStatus }}
       </h3>
-      <button
-        v-if="gameOver" 
-        class="board__restart"
-        @click="() => handleRestartGame()"
-      >
-        Перезапустить игру
-      </button>
+      <div class="board__info-wrapper">
+        <button
+          v-if="gameOver" 
+          class="board__restart"
+          @click="() => handleRestartClick()"
+        >
+          Перезапустить игру
+        </button>
+        <button class="board__copy" @click="copyToClipboard">
+          {{ isCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на игру' }}
+        </button>
+      </div>
     </div>
 
     <div class="board__wrapper">

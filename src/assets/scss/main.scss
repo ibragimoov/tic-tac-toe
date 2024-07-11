@@ -65,6 +65,11 @@ li {
   margin-right: auto;
 }
 
+.loader--create-room {
+  margin-top: 50%;
+  transform: translateY(+100%);
+}
+
 @media (min-width: 1024px) {
   body {
     display: flex;
