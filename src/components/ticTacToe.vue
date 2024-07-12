@@ -65,6 +65,9 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
     addNotification(winnerMessage, 'success')
   }
 })
+
+console.log(props.players[0] !== null)
+console.log(props.players[1] !== null)
 </script>
 
 <template>
@@ -83,7 +86,7 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
         >
           Перезапустить игру
         </button>
-        <button class="board__copy" @click="copyToClipboard">
+        <button v-if="players[0] === null || players[1] === null" class="board__copy" @click="copyToClipboard">
           {{ isCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на игру' }}
         </button>
       </div>

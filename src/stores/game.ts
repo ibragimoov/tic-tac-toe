@@ -77,52 +77,52 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
     const winLength = size >= 4 ? size - 1 : 3
 
     const checkLine = (line: number[]): SquareValue | null => {
-        const [first, ...rest] = line;
-        if (squares[first] && rest.every(index => squares[index] === squares[first])) {
-            return squares[first];
-        }
-        return null;
-    };
+      const [first, ...rest] = line
+      if (squares[first] && rest.every(index => squares[index] === squares[first])) {
+        return squares[first]
+      }
+      return null
+    }
 
-    const lines: number[][] = [];
+    const lines: number[][] = []
 
     // Горизонтальные линии
     for (let i = 0; i < size; i++) {
-        for (let j = 0; j <= size - winLength; j++) {
-            lines.push(Array.from({ length: winLength }, (_, k) => i * size + j + k));
-        }
+      for (let j = 0; j <= size - winLength; j++) {
+        lines.push(Array.from({ length: winLength }, (_, k) => i * size + j + k))
+      }
     }
 
     // Вертикальные линии
     for (let i = 0; i < size; i++) {
-        for (let j = 0; j <= size - winLength; j++) {
-            lines.push(Array.from({ length: winLength }, (_, k) => j * size + i + k * size));
-        }
+      for (let j = 0; j <= size - winLength; j++) {
+        lines.push(Array.from({ length: winLength }, (_, k) => j * size + i + k * size))
+      }
     }
 
     // Диагонали (слева направо)
     for (let i = 0; i <= size - winLength; i++) {
-        for (let j = 0; j <= size - winLength; j++) {
-            lines.push(Array.from({ length: winLength }, (_, k) => (i + k) * size + (j + k)));
-        }
+      for (let j = 0; j <= size - winLength; j++) {
+        lines.push(Array.from({ length: winLength }, (_, k) => (i + k) * size + (j + k)))
+      }
     }
 
     // Диагонали (справа налево)
     for (let i = 0; i <= size - winLength; i++) {
-        for (let j = winLength - 1; j < size; j++) {
-            lines.push(Array.from({ length: winLength }, (_, k) => (i + k) * size + (j - k)));
-        }
+      for (let j = winLength - 1; j < size; j++) {
+        lines.push(Array.from({ length: winLength }, (_, k) => (i + k) * size + (j - k)))
+      }
     }
 
     for (const line of lines) {
-        const result = checkLine(line);
-        if (result) {
-            return result;
-        }
+      const result = checkLine(line)
+      if (result) {
+        return result
+      }
     }
     
-    return null;
-  };
+    return null
+  }
 
   return {
     squares,
