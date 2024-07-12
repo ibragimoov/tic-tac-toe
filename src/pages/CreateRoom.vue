@@ -38,7 +38,9 @@
       @click="() => handleCreateGame()"
       class="create-room__submit"
     >
+      <stop-icon />
       {{ submitButtonText }}
+      <stop-icon />
     </button>
   </div>
 </template>
@@ -54,7 +56,9 @@ import circleIcon from '../components/icons/CircleIcon.vue'
 
 import { useTicTacToeStore } from '../stores/game'
 import type { SquareValue } from '../stores/game'
+
 import SearchIcon from '../components/icons/SearchIcon.vue'
+import StopIcon from '../components/icons/StopIcon.vue'
 
 const store = useTicTacToeStore()
 
@@ -68,7 +72,7 @@ const isFormValid = computed(() => {
 })
 
 const submitButtonText = computed(() => {
-  return isFormValid.value ? 'Начать игру' : '⛔️ Убедитесь, что вы выбрали ник и роль ⛔️'
+  return isFormValid.value ? 'Начать игру' : 'Убедитесь, что вы выбрали ник и роль'
 })
 
 const router = useRouter()
