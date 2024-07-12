@@ -5,8 +5,8 @@ import { createPinia } from 'pinia'
 
 import notificationPlugin from './plugins/notification'
 import { router } from './router/index'
-import 'vue-loaders/dist/vue-loaders.css';
-import VueLoaders from 'vue-loaders';
+import 'vue-loaders/dist/vue-loaders.css'
+import VueLoaders from 'vue-loaders'
 
 import App from './App.vue'
   
