@@ -46,6 +46,8 @@ export const useTicTacToe = () => {
   }
 
   const sendEmoji = (roomId: number, from: string, emojiToSend: string) => {
+    addNotification(emojiToSend, 'success')
+    console.log(from)
     socket.emit('sendEmoji', { roomId, from, emoji: emojiToSend })
   }
 
@@ -65,7 +67,9 @@ export const useTicTacToe = () => {
   })
 
   socket.on('handleEmoji', ({ to, message }) => {
-    addNotification(message, 'success')
+    if (to === socket.id) {
+      addNotification(message, 'success')
+    }
   })
 
   return {
