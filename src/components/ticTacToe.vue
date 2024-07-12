@@ -12,8 +12,10 @@ import type { Player } from '../services/tic-tac-toe.service'
 import SquareBlock from './squareBlock.vue'
 
 import type { NotificationType } from '../plugins/notification'
-import { emojiObj } from '../utils/getEmoji'
 import { socket } from '../socket'
+import AngryIcon from './icons/AngryIcon.vue'
+import CryingIcon from './icons/CryingIcon.vue'
+import LaughIcon from './icons/LaughIcon.vue'
 
 const props = defineProps({
   players: {
@@ -102,9 +104,9 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
           <!-- <button @click="handleReactionToggle" class="board__reaction-toggle">Отправить реакцию</button> -->
           <transition>
             <div class="board__reaction-wrapper">
-              <div @click="() => handleReactionClick('🤣')" class="board__reaction-item">🤣</div>
-              <div @click="() => handleReactionClick('😡')" class="board__reaction-item">😡</div>
-              <div @click="() => handleReactionClick('😭')" class="board__reaction-item">😭</div>
+              <div @click="() => handleReactionClick('🤣')" class="board__reaction-item"><laugh-icon /></div>
+              <div @click="() => handleReactionClick('😡')" class="board__reaction-item"><angry-icon /></div>
+              <div @click="() => handleReactionClick('😭')" class="board__reaction-item"><crying-icon /></div>
             </div>
           </transition>
         </div>

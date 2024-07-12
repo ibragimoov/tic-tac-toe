@@ -1,6 +1,6 @@
 <template>
   <div class="create-room">
-    <h1 class="title">Создание комнаты 🔍</h1>
+    <h1 class="title">Создание комнаты <search-icon /></h1>
 
     <h3>Выберите себе ник:</h3>
     <input v-model="username" maxlength="20" class="input__input" placeholder="Ваш ник" />
@@ -54,6 +54,7 @@ import circleIcon from '../components/icons/CircleIcon.vue'
 
 import { useTicTacToeStore } from '../stores/game'
 import type { SquareValue } from '../stores/game'
+import SearchIcon from '../components/icons/SearchIcon.vue'
 
 const store = useTicTacToeStore()
 
@@ -95,3 +96,11 @@ socket.on('roomCreated', (room) => {
   router.push(`/room/${room.id}`)
 })
 </script>
+
+<style scoped>
+h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+</style>

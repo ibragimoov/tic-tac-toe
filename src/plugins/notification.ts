@@ -50,10 +50,10 @@ export default {
 
     app.config.globalProperties.$removeNotificationEmoji = (messageId: number) => {
       console.log(notificationsEmoji, notificationsEmoji.length)
-      const notificationIndex = notificationsGameStatus.findIndex((notification: Notification) => notification.id === messageId)
+      const notificationIndex = notificationsEmoji.findIndex((notification: Notification) => notification.id === messageId)
 
       if (notificationIndex !== -1) {
-        notificationsGameStatus.splice(notificationIndex, 1)
+        notificationsEmoji.splice(notificationIndex, 1)
       }
     }
 
