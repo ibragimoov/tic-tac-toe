@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, inject } from 'vue'
+import { watch, inject, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import type { WinnerValue, SquareValue } from '../stores/game'
@@ -25,10 +25,18 @@ const props = defineProps({
 })
 
 const store = useTicTacToeStore()
-const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, currentPlayerSocketId } = storeToRefs(store)
+const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, currentPlayerSocketId, boardSize, allSquares } = storeToRefs(store)
 const { handleMakeMove, handleRestartGame, isMoveValid } = useTicTacToe()
 const { copyToClipboard, isCopied } = useCopyToClipboard()
 const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
+
+const boardRows = computed(() => {
+  const rows = []
+  for (let i = 0; i < Number(boardSize.value); i++) {
+    rows.push(store.squares.slice(i * Number(boardSize.value), i * Number(boardSize.value) * 2))
+  }
+  return rows
+})
 
 const handleRestartClick = () => {
   handleRestartGame(String(props.roomId))
@@ -61,7 +69,7 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
 
 <template>
   <div class="board">
-    <div>
+    <div class="board__info">
       <a href="https://t.me/eldar_ibragimov" target="_blank" class="board__madeby">made by @eldar_ibragimov</a>
       <h1 class="board__title">Крестики-нолики</h1>
       <h3 class="board__move">
@@ -71,7 +79,7 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
         <button
           v-if="gameOver" 
           class="board__restart"
-          @click="() => handleRestartClick()"
+          @click="handleRestartClick"
         >
           Перезапустить игру
         </button>
@@ -82,23 +90,19 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
     </div>
 
     <div class="board__wrapper">
-      <div class="board__row">
-        <square-block :value="store.allSquares[0]" @square-change="() => handleSquareClick(0)" />
-        <square-block :value="store.allSquares[1]" @square-change="() => handleSquareClick(1)" />
-        <square-block :value="store.allSquares[2]" @square-change="() => handleSquareClick(2)" />
-      </div>
-
-      <div class="board__row">
-        <square-block :value="store.allSquares[3]" @square-change="() => handleSquareClick(3)" />
-        <square-block :value="store.allSquares[4]" @square-change="() => handleSquareClick(4)" />
-        <square-block :value="store.allSquares[5]" @square-change="() => handleSquareClick(5)" />
+      <div 
+        v-for="(row, rowIndex) in boardRows" 
+        :key="rowIndex" 
+        class="board__row"
+      >
+        <square-block 
+          v-for="(square, colIndex) in row" 
+          :key="colIndex"
+          :value="square" 
+          :val="rowIndex * Number(boardSize) + colIndex"
+          @square-change="handleSquareClick(rowIndex * Number(boardSize) + colIndex)" 
+        />
       </div> 
-
-      <div class="board__row">
-        <square-block :value="store.allSquares[6]" @square-change="() => handleSquareClick(6)" />
-        <square-block :value="store.allSquares[7]" @square-change="() => handleSquareClick(7)" />
-        <square-block :value="store.allSquares[8]" @square-change="() => handleSquareClick(8)" />
-      </div>  
     </div> 
   </div>
 </template>

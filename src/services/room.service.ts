@@ -5,7 +5,10 @@ import { socket } from '../socket'
 
 import type { Player } from './tic-tac-toe.service'
 
+import { useTicTacToeStore } from '@/stores/game'
+
 export const useRoom = () => {
+  const store = useTicTacToeStore()
   const isJoined = ref(false)
   const isRoomResponse = ref(false)
   const playerX = ref<Player>({} as Player)
@@ -15,14 +18,12 @@ export const useRoom = () => {
   const router = useRouter()
 
   const initializeRoom = (roomId: string | string[]) => {
-    console.log(roomId)
     socket.emit('getRoom', { roomId })
   }
 
   const joinRoom = (roomId: string | string[], username: string) => {
     isLoading.value = true
     socket.emit('joinRoom', { roomId, username, role: 'X or O', socketId: socket.id })
-    console.log(roomId, username, 'X or O', socket.id)
   }
 
   socket.on('playerJoined', (room) => {
@@ -39,6 +40,9 @@ export const useRoom = () => {
     if (success) {
       playerX.value = room.playerX
       playerO.value = room.playerO
+
+      store.boardSize = room.boardSize
+      store.squares.push(...Array(Number(store.boardSize) * Number(store.boardSize)).fill(null))
 
       const isPlayerHost = room.socketIdX === socket.id || room.socketIdO === socket.id
       if (isPlayerHost) isJoined.value = true

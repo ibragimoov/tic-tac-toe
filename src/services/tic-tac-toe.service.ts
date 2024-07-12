@@ -46,10 +46,10 @@ export const useTicTacToe = () => {
     store.updateSquares(data.index, data.move, data.isCurrentStepX, data.socketId)
   })
 
-  socket.on('gameStateUpdate', (data: { boardState: Array<'X' | 'O' | null>, currentStepX: boolean, socketId: string, isRestart: boolean }) => {
+  socket.on('gameStateUpdate', (data: { boardState: Array<'X' | 'O' | null>, currentStepX: boolean, socketId: string, isRestart: boolean, boardSize: number }) => {
     const isUpdateGameStateToAnotherPlayer = data.socketId === socket.id
     if (isUpdateGameStateToAnotherPlayer || data.isRestart) {
-      store.setBoardState(data.boardState, data.currentStepX, data.socketId)
+      store.setBoardState(data.boardState, data.currentStepX, data.socketId, data.boardSize)
     }
   })
 
