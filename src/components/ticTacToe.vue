@@ -13,9 +13,11 @@ import SquareBlock from './squareBlock.vue'
 
 import type { NotificationType } from '../plugins/notification'
 import { socket } from '../socket'
+
 import AngryIcon from './icons/AngryIcon.vue'
 import CryingIcon from './icons/CryingIcon.vue'
 import LaughIcon from './icons/LaughIcon.vue'
+import CoolIcon from './icons/CoolIcon.vue'
 
 const props = defineProps({
   players: {
@@ -33,8 +35,6 @@ const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, currentPlay
 const { handleMakeMove, handleRestartGame, isMoveValid, sendEmoji } = useTicTacToe()
 const { copyToClipboard, isCopied } = useCopyToClipboard()
 const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
-
-const isReactionToggled = ref<boolean>(false)
 
 const boardRows = computed(() => {
   const rows = []
@@ -63,10 +63,6 @@ const handleSquareClick = (indexSquare: number) => {
   }
   
   handleMakeMove(moveObj)
-}
-
-const handleReactionToggle = () => {
-  isReactionToggled.value = !isReactionToggled.value
 }
 
 const handleReactionClick = (emojiToSend: string) => {
@@ -101,12 +97,12 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
           {{ isCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на игру' }}
         </button>
         <div class="board__reaction">
-          <!-- <button @click="handleReactionToggle" class="board__reaction-toggle">Отправить реакцию</button> -->
           <transition>
             <div class="board__reaction-wrapper">
               <div @click="() => handleReactionClick('🤣')" class="board__reaction-item"><laugh-icon /></div>
               <div @click="() => handleReactionClick('😡')" class="board__reaction-item"><angry-icon /></div>
               <div @click="() => handleReactionClick('😭')" class="board__reaction-item"><crying-icon /></div>
+              <div @click="() => handleReactionClick('😎')" class="board__reaction-item"><cool-icon /></div>
             </div>
           </transition>
         </div>

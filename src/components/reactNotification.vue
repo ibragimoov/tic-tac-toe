@@ -10,6 +10,7 @@
           <angry-icon v-if="notification.message === '😡'" />
           <laugh-icon v-if="notification.message === '🤣'" />
           <crying-icon v-if="notification.message === '😭'" />
+          <cool-icon v-if="notification.message === '😎'" />
         </div>
       </transition-group>
   </div>
@@ -22,6 +23,7 @@ import type { Notification } from '../plugins/notification'
 import AngryIcon from './icons/AngryIcon.vue'
 import CryingIcon from './icons/CryingIcon.vue'
 import LaughIcon from './icons/LaughIcon.vue'
+import CoolIcon from './icons/CoolIcon.vue'
 
 const notificationsEmoji = inject('notificationsEmoji') as Notification[]
 const removeNotificationEmoji = inject('removeNotificationEmoji') as (id: number) => void

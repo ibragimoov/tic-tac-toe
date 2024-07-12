@@ -33,14 +33,22 @@
     </div>
 
     <button
-      :disabled="!isFormValid || isLoading"
+      v-if="!isFormValid"
       :class="{ disabled: !isFormValid }"
-      @click="() => handleCreateGame()"
+      disabled
       class="create-room__submit"
     >
       <stop-icon />
-      {{ submitButtonText }}
+      Выберите ник, роль и размер поля
       <stop-icon />
+    </button>
+    <button
+      v-else
+      :disabled="isLoading"
+      @click="() => handleCreateGame()"
+      class="create-room__submit"
+    >
+      Начать игру
     </button>
   </div>
 </template>
