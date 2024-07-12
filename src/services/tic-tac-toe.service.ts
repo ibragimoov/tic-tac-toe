@@ -1,6 +1,7 @@
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { useTicTacToeStore, type SquareValue } from '@/stores/game'
 import { socket } from '../socket'
+import type { NotificationType } from '@/plugins/notification'
 
 export interface Player {
   id: number
@@ -10,6 +11,8 @@ export interface Player {
 
 export const useTicTacToe = () => {
   const store = useTicTacToeStore()
+  const addNotification = inject('addNotificationEmoji') as (message: string, type: NotificationType) => {}
+
   const currentPlayerSocketId = computed(() => store.currentPlayerSocketId)
 
   const isMoveValid = (indexSquare: number, playerX: Player | null, playerO: Player | null) => {
@@ -42,6 +45,10 @@ export const useTicTacToe = () => {
     store.updateSquares(data.index, data.move, store.isCurrentStepX ? false : true, String(socket.id))
   }
 
+  const sendEmoji = (roomId: number, from: string, emojiToSend: string) => {
+    socket.emit('sendEmoji', { roomId, from, emoji: emojiToSend })
+  }
+
   socket.on('moveMade', (data: { index: number, move: SquareValue, isCurrentStepX: boolean, socketId: string }) => {
     store.updateSquares(data.index, data.move, data.isCurrentStepX, data.socketId)
   })
@@ -57,9 +64,14 @@ export const useTicTacToe = () => {
     store.currentPlayerSocketId = socketId
   })
 
+  socket.on('handleEmoji', ({ to, message }) => {
+    addNotification(message, 'success')
+  })
+
   return {
     handleMakeMove,
     handleRestartGame,
     isMoveValid,
+    sendEmoji
   }
 }

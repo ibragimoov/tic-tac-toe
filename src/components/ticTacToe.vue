@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, inject, computed } from 'vue'
+import { watch, inject, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import type { WinnerValue, SquareValue } from '../stores/game'
@@ -12,6 +12,8 @@ import type { Player } from '../services/tic-tac-toe.service'
 import SquareBlock from './squareBlock.vue'
 
 import type { NotificationType } from '../plugins/notification'
+import { emojiObj } from '../utils/getEmoji'
+import { socket } from '../socket'
 
 const props = defineProps({
   players: {
@@ -26,9 +28,11 @@ const props = defineProps({
 
 const store = useTicTacToeStore()
 const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, currentPlayerSocketId, boardSize, allSquares } = storeToRefs(store)
-const { handleMakeMove, handleRestartGame, isMoveValid } = useTicTacToe()
+const { handleMakeMove, handleRestartGame, isMoveValid, sendEmoji } = useTicTacToe()
 const { copyToClipboard, isCopied } = useCopyToClipboard()
 const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
+
+const isReactionToggled = ref<boolean>(false)
 
 const boardRows = computed(() => {
   const rows = []
@@ -59,15 +63,20 @@ const handleSquareClick = (indexSquare: number) => {
   handleMakeMove(moveObj)
 }
 
+const handleReactionToggle = () => {
+  isReactionToggled.value = !isReactionToggled.value
+}
+
+const handleReactionClick = (emojiToSend: string) => {
+  sendEmoji(props.roomId, socket.id || '', emojiToSend)
+}
+
 watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
   if (newVal) {
     const winnerMessage = `Игра окончена, ${newVal} победил 😎`
     addNotification(winnerMessage, 'success')
   }
 })
-
-console.log(props.players[0] !== null)
-console.log(props.players[1] !== null)
 </script>
 
 <template>
@@ -89,6 +98,16 @@ console.log(props.players[1] !== null)
         <button v-if="players[0] === null || players[1] === null" class="board__copy" @click="copyToClipboard">
           {{ isCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на игру' }}
         </button>
+        <div class="board__reaction">
+          <!-- <button @click="handleReactionToggle" class="board__reaction-toggle">Отправить реакцию</button> -->
+          <transition>
+            <div class="board__reaction-wrapper">
+              <div @click="() => handleReactionClick('🤣')" class="board__reaction-item">🤣</div>
+              <div @click="() => handleReactionClick('😡')" class="board__reaction-item">😡</div>
+              <div @click="() => handleReactionClick('😭')" class="board__reaction-item">😭</div>
+            </div>
+          </transition>
+        </div>
       </div>
     </div>
 

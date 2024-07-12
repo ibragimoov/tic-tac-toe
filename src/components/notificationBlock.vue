@@ -2,7 +2,7 @@
   <div class="notifications">
       <transition-group>
         <div 
-          v-for="(notification, index) in notifications"
+          v-for="(notification, index) in notificationsGameStatus"
           :key="index"
           class="notifications__message"
           :class="`${'notifications__message--' + notification.type}`"
@@ -18,6 +18,6 @@
 import { inject } from 'vue'
 import type { Notification } from '../plugins/notification'
 
-const notifications = inject('notifications') as Notification[]
+const notificationsGameStatus = inject('notificationsGameStatus') as Notification[]
 const removeNotification = inject('removeNotification') as (id: number) => void
 </script>

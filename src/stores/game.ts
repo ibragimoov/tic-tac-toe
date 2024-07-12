@@ -86,28 +86,24 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
 
     const lines: number[][] = []
 
-    // Горизонтальные линии
     for (let i = 0; i < size; i++) {
       for (let j = 0; j <= size - winLength; j++) {
         lines.push(Array.from({ length: winLength }, (_, k) => i * size + j + k))
       }
     }
 
-    // Вертикальные линии
     for (let i = 0; i < size; i++) {
       for (let j = 0; j <= size - winLength; j++) {
         lines.push(Array.from({ length: winLength }, (_, k) => j * size + i + k * size))
       }
     }
 
-    // Диагонали (слева направо)
     for (let i = 0; i <= size - winLength; i++) {
       for (let j = 0; j <= size - winLength; j++) {
         lines.push(Array.from({ length: winLength }, (_, k) => (i + k) * size + (j + k)))
       }
     }
 
-    // Диагонали (справа налево)
     for (let i = 0; i <= size - winLength; i++) {
       for (let j = winLength - 1; j < size; j++) {
         lines.push(Array.from({ length: winLength }, (_, k) => (i + k) * size + (j - k)))
