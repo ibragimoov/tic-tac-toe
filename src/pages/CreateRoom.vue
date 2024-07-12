@@ -18,13 +18,13 @@
     <h3>Выберите размер поля:</h3>
     <div class="create-room__roles-list">
       <div @click="() => handleSelectBoardSize(3)" :class="{ 'create-room__roles-item--active': boardSize === 3 }" class="create-room__roles-item">
-        <h2>3x3</h2>
+        <h2 class="create-room__size-title">3x3</h2>
       </div>
       <div @click="() => handleSelectBoardSize(4)" :class="{ 'create-room__roles-item--active': boardSize === 4 }" class="create-room__roles-item">
-        <h2>4x4</h2>
+        <h2 class="create-room__size-title">4x4</h2>
       </div>
       <div @click="() => handleSelectBoardSize(5)" :class="{ 'create-room__roles-item--active': boardSize === 5 }" class="create-room__roles-item">
-        <h2>5x5</h2>
+        <h2 class="create-room__size-title">5x5</h2>
       </div>
     </div>
 
@@ -57,7 +57,7 @@ import type { SquareValue } from '../stores/game'
 
 const store = useTicTacToeStore()
 
-const role = ref<SquareValue>(null)
+const role = ref<SquareValue>('X')
 const username = ref<string>('')
 const isLoading = ref<boolean>(false)
 const boardSize = ref<number>(3)

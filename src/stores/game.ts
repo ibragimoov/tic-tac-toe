@@ -8,7 +8,7 @@ export type WinnerValue = 'Крестик' | 'Нолик' | 'Ничья' | null
 
 export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
   // state
-  const boardSize = ref<number | null>(null)
+  const boardSize = ref<number>(0)
   const squares = ref<Array<SquareValue>>([] || Array(boardSize.value).fill(null))
   const isCurrentStepX = ref<Boolean>(true)
   const currentPlayerSocketId = ref<string | null>(null)
@@ -17,7 +17,7 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
   const allSquares = computed(() => squares.value)
 
   const winner = computed<WinnerValue>(() => {
-    const winnerValue = calculateWinner(squares.value, Number(boardSize.value))
+    const winnerValue = calculateWinner(squares.value, boardSize.value)
     return winnerValue !== null ? (winnerValue === 'X' ? 'Крестик' : 'Нолик') : null
   })
 
@@ -68,7 +68,7 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
   }
 
   const restartGame = () => {
-    squares.value = Array(Number(boardSize.value) * Number(boardSize.value)).fill(null)
+    squares.value = Array(boardSize.value * boardSize.value).fill(null)
     isCurrentStepX.value = true
     currentPlayerSocketId.value = null
   }

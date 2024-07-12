@@ -32,8 +32,8 @@ const addNotification = inject('addNotification') as (message: string, type: Not
 
 const boardRows = computed(() => {
   const rows = []
-  for (let i = 0; i < Number(boardSize.value); i++) {
-    rows.push(store.squares.slice(i * Number(boardSize.value), i * Number(boardSize.value) * 2))
+  for (let i = 0; i < boardSize.value; i++) {
+    rows.push(store.squares.slice(i * boardSize.value, i * boardSize.value + boardSize.value))
   }
   return rows
 })
@@ -99,8 +99,8 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
           v-for="(square, colIndex) in row" 
           :key="colIndex"
           :value="square" 
-          :val="rowIndex * Number(boardSize) + colIndex"
-          @square-change="handleSquareClick(rowIndex * Number(boardSize) + colIndex)" 
+          :val="rowIndex * boardSize + colIndex"
+          @square-change="handleSquareClick(rowIndex * boardSize + colIndex)" 
         />
       </div> 
     </div> 
