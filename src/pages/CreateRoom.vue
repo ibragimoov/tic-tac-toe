@@ -61,14 +61,16 @@ import { socket } from '../socket'
 
 import crossIcon from '../components/icons/CrossIcon.vue'
 import circleIcon from '../components/icons/CircleIcon.vue'
+import SearchIcon from '../components/icons/SearchIcon.vue'
+import StopIcon from '../components/icons/StopIcon.vue'
 
 import { useTicTacToeStore } from '../stores/game'
 import type { SquareValue } from '../stores/game'
 
-import SearchIcon from '../components/icons/SearchIcon.vue'
-import StopIcon from '../components/icons/StopIcon.vue'
+import { useRoom } from '../services/room.service'
 
 const store = useTicTacToeStore()
+const { createUser, createGame } = useRoom()
 
 const role = ref<SquareValue>('X')
 const username = ref<string>('')
@@ -96,17 +98,12 @@ const handleSelectBoardSize = (size: number) => {
 const handleCreateGame = () => {
   isLoading.value = true
 
-  socket.emit('createUser', { username: username.value })
-  socket.emit('createRoom', { username: username.value, role: role.value, socketId: socket.id, boardSize: boardSize.value })
+  createUser(username.value)
+  createGame({ username: username.value, role: role.value, boardSize: boardSize.value })
 
   store.boardSize = Number(boardSize.value)
   store.squares.push(...Array(store.boardSize * store.boardSize).fill(null))
 }
-
-socket.on('roomCreated', (room) => {
-  isLoading.value = false
-  router.push(`/room/${room.id}`)
-})
 </script>
 
 <style scoped>

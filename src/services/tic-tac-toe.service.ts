@@ -13,14 +13,12 @@ export const useTicTacToe = () => {
   const store = useTicTacToeStore()
   const addNotification = inject('addNotificationEmoji') as (message: string, type: NotificationType) => {}
 
-  const currentPlayerSocketId = computed(() => store.currentPlayerSocketId)
-
-  const isMoveValid = (indexSquare: number, playerX: Player | null, playerO: Player | null) => {
+  const isMoveValid = (indexSquare: number, playerX: Player | null, playerO: Player | null, isCurrentStepX: boolean) => {
     if (!playerX || !playerO) return false
 
-    if (socket.id !== currentPlayerSocketId.value) {
-      return false
-    }
+    const currentMove = isCurrentStepX ? 'X' : 'O'
+
+    if (currentMove !== store.myMove) return false
 
     const isGameEnded = store.gameOver || store.squares[indexSquare]
     return !isGameEnded
@@ -32,44 +30,37 @@ export const useTicTacToe = () => {
   }
 
   const handleMakeMove = (
-    data: { roomId: number, index: number, move: SquareValue, player: string }
+    data: { roomId: number, index: number, move: SquareValue, isCurrentStepX: boolean }
   ) => {
     socket.emit('makeMove', { 
       roomId: data.roomId, 
       index: data.index, 
       move: data.move, 
-      player: data.player, 
-      socketId: socket.id
+      isCurrentStepX: data.isCurrentStepX,
     })
 
-    store.updateSquares(data.index, data.move, store.isCurrentStepX ? false : true, String(socket.id))
+    store.updateSquares(data.index, data.move, store.isCurrentStepX ? false : true)
   }
 
   const sendEmoji = (roomId: number, from: string, emojiToSend: string) => {
     addNotification(emojiToSend, 'success')
-    console.log(from)
     socket.emit('sendEmoji', { roomId, from, emoji: emojiToSend })
   }
 
   socket.on('moveMade', (data: { index: number, move: SquareValue, isCurrentStepX: boolean, socketId: string }) => {
-    store.updateSquares(data.index, data.move, data.isCurrentStepX, data.socketId)
+    store.updateSquares(data.index, data.move, data.isCurrentStepX)
   })
 
-  socket.on('gameStateUpdate', (data: { boardState: Array<'X' | 'O' | null>, currentStepX: boolean, socketId: string, isRestart: boolean, boardSize: number }) => {
-    const isUpdateGameStateToAnotherPlayer = data.socketId === socket.id
-    if (isUpdateGameStateToAnotherPlayer || data.isRestart) {
-      store.setBoardState(data.boardState, data.currentStepX, data.socketId, data.boardSize)
-    }
+  socket.on('gameStateUpdate', (data: { indexSquare: number, currentStepX: boolean, move: 'X' | 'O' }) => {
+    store.setBoardState(data.indexSquare, data.currentStepX, data.move)
   })
 
-  socket.on('getPlayerFirstMove', ({ socketId }) => {
-    store.currentPlayerSocketId = socketId
+  socket.on('handleEmoji', ({ message }) => {
+    addNotification(message, 'success')
   })
 
-  socket.on('handleEmoji', ({ to, message }) => {
-    if (to === socket.id) {
-      addNotification(message, 'success')
-    }
+  socket.on('restartGame', () => {
+    store.restartGame()
   })
 
   return {

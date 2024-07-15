@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { watch, inject, computed, ref } from 'vue'
+import { watch, inject, computed, ref, onMounted } from 'vue'
+import type { PropType } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import type { WinnerValue, SquareValue } from '../stores/game'
@@ -21,47 +22,44 @@ import CoolIcon from './icons/CoolIcon.vue'
 
 const props = defineProps({
   players: {
-    type: Array<Player>,
+    type: Array as PropType<Player[]>,
     required: true,
   },
   roomId: {
     type: Number,
     required: true
+  },
+  move: {
+    type: String as PropType<'X' | 'O' | null>,
+    required: true
   }
 })
 
 const store = useTicTacToeStore()
-const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, currentPlayerSocketId, boardSize, allSquares } = storeToRefs(store)
+const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, boardSize, allSquares, boardRows } = storeToRefs(store)
 const { handleMakeMove, handleRestartGame, isMoveValid, sendEmoji } = useTicTacToe()
 const { copyToClipboard, isCopied } = useCopyToClipboard()
 const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
-
-const boardRows = computed(() => {
-  const rows = []
-  for (let i = 0; i < boardSize.value; i++) {
-    rows.push(store.squares.slice(i * boardSize.value, i * boardSize.value + boardSize.value))
-  }
-  return rows
-})
 
 const handleRestartClick = () => {
   handleRestartGame(String(props.roomId))
 }
 
 const handleSquareClick = (indexSquare: number) => {
-  if (!isMoveValid(indexSquare, props.players[0], props.players[1])) {
+  const currentValue: SquareValue = isCurrentStepX.value ? 'X' : 'O'
+  const valueIsCurrentStepX = isCurrentStepX.value ? true: false
+
+  if (!isMoveValid(indexSquare, props.players[0], props.players[1], valueIsCurrentStepX)) {
     return
   }
-
-  const currentValue: SquareValue = isCurrentStepX.value ? 'X' : 'O'
 
   const moveObj = { 
     roomId: props.roomId, 
     index: indexSquare, 
     move: currentValue, 
-    player: props.players[isCurrentStepX.value ? 0 : 1].username
+    isCurrentStepX: isCurrentStepX.value ? true: false,
   }
-  
+
   handleMakeMove(moveObj)
 }
 
@@ -74,6 +72,10 @@ watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
     const winnerMessage = `Игра окончена, ${newVal} победил 😎`
     addNotification(winnerMessage, 'success')
   }
+})
+
+onMounted(() => {
+  store.myMove = props.move
 })
 </script>
 

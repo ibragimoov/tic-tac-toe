@@ -23,13 +23,13 @@
           <circle-icon :width="30" :height="30" />
         </div>
       </div>
-      <tic-tac-toe :roomId="+route.params.id" :players="[playerX, playerO]" />
+      <tic-tac-toe :roomId="+route.params.id" :players="[playerX, playerO]" :move="move" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useRoom } from '../services/room.service'
@@ -49,7 +49,8 @@ const {
   playerO,
   isLoading,
   initializeRoom,
-  joinRoom
+  joinRoom,
+  move
 } = useRoom()
 
 onMounted(() => {

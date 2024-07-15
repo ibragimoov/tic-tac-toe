@@ -5,15 +5,16 @@ import { socket } from '../socket'
 
 import type { Player } from './tic-tac-toe.service'
 
-import { useTicTacToeStore } from '@/stores/game'
+import { useTicTacToeStore, type SquareValue } from '@/stores/game'
 
 export const useRoom = () => {
   const store = useTicTacToeStore()
   const isJoined = ref(false)
-  const isRoomResponse = ref(false)
+  const isRoomResponse = ref<boolean>(false)
   const playerX = ref<Player>({} as Player)
   const playerO = ref<Player>({} as Player)
   const isLoading = ref(false)
+  const move = ref<'X' | 'O' | null>(null)
 
   const router = useRouter()
 
@@ -23,46 +24,55 @@ export const useRoom = () => {
 
   const joinRoom = (roomId: string | string[], username: string) => {
     isLoading.value = true
-    socket.emit('joinRoom', { roomId, username, role: 'X or O', socketId: socket.id })
+    socket.emit('joinRoom', { roomId, username, role: 'X or O' })
   }
 
-  socket.on('playerJoined', (room) => {
+  const createUser = (username: string) => {
+    socket.emit('createUser', { username })
+  }
+
+  const createGame = (data :{ username: string, role: SquareValue, boardSize: number }) => {
+    socket.emit('createRoom', { username: data.username, role: data.role, boardSize: data.boardSize })
+  }
+
+  socket.on('playerJoined', ({ success, room, myMove }) => {
     isJoined.value = true
-    isRoomResponse.value = true
-
-    playerX.value = room.playerX
-    playerO.value = room.playerO
-  })
-
-  socket.on('joinRoomResponse', ({ success, room }) => {
     isLoading.value = false
     isRoomResponse.value = true
+
     if (success) {
       playerX.value = room.playerX
       playerO.value = room.playerO
 
+      move.value = myMove
+
       store.boardSize = room.boardSize
       store.squares.push(...Array(Number(store.boardSize) * Number(store.boardSize)).fill(null))
 
-      const isPlayerHost = room.socketIdX === socket.id || room.socketIdO === socket.id
-      if (isPlayerHost) isJoined.value = true
+      isJoined.value = true
     } else {
       router.push('/')
     }
   })
 
-  socket.on('getRoomResponse', ({ success, room }) => {
+  socket.on('getRoomResponse', ({ success, room, myMove }) => {
     if (success) {
       playerX.value = room.playerX
       playerO.value = room.playerO
 
       isRoomResponse.value = true
 
-      const isPlayerHost = room.socketIdX === socket.id || room.socketIdO === socket.id
-      if (isPlayerHost) isJoined.value = true
-    } else {
-      router.push('/')
+      isJoined.value = true
+      move.value = myMove
+    } else{
+      isRoomResponse.value = true
     }
+  })
+
+  socket.on('roomCreated', (room) => {
+    router.push({
+      path: `/room/${room.id}`
+    })
   })
 
   return {
@@ -72,6 +82,9 @@ export const useRoom = () => {
     isRoomResponse,
     playerX,
     playerO,
-    isLoading
+    isLoading,
+    createGame,
+    createUser,
+    move
   }
 }
