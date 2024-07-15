@@ -7,7 +7,7 @@ export const state = reactive({
   barEvents: []
 })
 
-const URL = import.meta.env.API_URL || "http://localhost:3000"
+const URL = import.meta.env.API_URL || "https://tic-tac-toe-server-v8ld.onrender.com" || "http://localhost:3000"
 
 export const socket = io(URL, { transports: ['websocket'] })
 
