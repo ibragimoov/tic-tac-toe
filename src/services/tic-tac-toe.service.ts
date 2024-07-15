@@ -63,6 +63,10 @@ export const useTicTacToe = () => {
     store.restartGame()
   })
 
+  socket.on('playerLeft', ({ message }) => {
+    addNotification(message, 'info')
+  })
+
   return {
     handleMakeMove,
     handleRestartGame,
