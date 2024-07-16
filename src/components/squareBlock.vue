@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { computed } from 'vue';
 
-import cross from './icons/CrossIcon.vue'
+import crossIcon from './icons/CrossIcon.vue'
 import circleIcon from './icons/CircleIcon.vue'
 
-defineProps<{
-  value: string | null
+const props = defineProps<{
+  value: string | null,
+  isWin: boolean
 }>()
 
 const emit = defineEmits<{
@@ -15,15 +16,19 @@ const emit = defineEmits<{
 const handleClick = () => {
   emit('square-change')
 }
+
+const getIconByValue = computed(() => {
+  if (props.value === 'X') return crossIcon
+  if (props.value === 'O') return circleIcon
+
+  return null
+})
 </script>
 
 <template>
-  <button @click="handleClick" class="square">
+  <button @click="handleClick" class="square" :class="{ 'square__win': isWin }">
     <transition>
-      <cross v-if="value === 'X'" :width="60" :height="60" />
-    </transition>
-    <transition>
-      <circle-icon v-if="value === 'O'" :width="60" :height="60" />
+      <component :is="getIconByValue" :width="60" :height="60" />
     </transition>
   </button>
 </template>

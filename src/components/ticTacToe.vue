@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { watch, inject, computed, ref, onMounted } from 'vue'
+import { watch, inject, computed, onMounted, onUnmounted } from 'vue'
 import type { PropType } from 'vue'
 import { storeToRefs } from 'pinia'
+import { socket } from '../socket'
 
 import type { WinnerValue, SquareValue } from '../stores/game'
 import { useTicTacToeStore } from '../stores/game'
@@ -10,11 +11,9 @@ import { useTicTacToe } from '../services/tic-tac-toe.service'
 import { useCopyToClipboard } from '../services/clipboard.service'
 import type { Player } from '../services/tic-tac-toe.service'
 
-import SquareBlock from './squareBlock.vue'
-
 import type { NotificationType } from '../plugins/notification'
-import { socket } from '../socket'
 
+import SquareBlock from './squareBlock.vue'
 import AngryIcon from './icons/AngryIcon.vue'
 import CryingIcon from './icons/CryingIcon.vue'
 import LaughIcon from './icons/LaughIcon.vue'
@@ -35,11 +34,16 @@ const props = defineProps({
   }
 })
 
+const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
+
 const store = useTicTacToeStore()
-const { isCurrentStepX, winner, gameStatus, gameOver, currentPlayer, boardSize, allSquares, boardRows } = storeToRefs(store)
+const { isCurrentStepX, winner, gameStatus, gameOver, boardSize, boardRows, winnigLine } = storeToRefs(store)
 const { handleMakeMove, handleRestartGame, isMoveValid, sendEmoji } = useTicTacToe()
 const { copyToClipboard, isCopied } = useCopyToClipboard()
-const addNotification = inject('addNotification') as (message: string, type: NotificationType) => {}
+
+const isOnlyOnePlayerInRoom = computed(() => {
+  return props.players[0] === null || props.players[1] === null
+})
 
 const handleRestartClick = () => {
   handleRestartGame(String(props.roomId))
@@ -67,15 +71,12 @@ const handleReactionClick = (emojiToSend: string) => {
   sendEmoji(props.roomId, socket.id || '', emojiToSend)
 }
 
-watch(winner, (newVal: WinnerValue, _: WinnerValue) => {
-  if (newVal) {
-    const winnerMessage = `Игра окончена, ${newVal} победил 😎`
-    addNotification(winnerMessage, 'success')
-  }
-})
-
 onMounted(() => {
   store.myMove = props.move
+})
+
+onUnmounted(() => {
+  store.restartGame()
 })
 </script>
 
@@ -95,7 +96,7 @@ onMounted(() => {
         >
           Перезапустить игру
         </button>
-        <button v-if="players[0] === null || players[1] === null" class="board__copy" @click="copyToClipboard">
+        <button v-if="isOnlyOnePlayerInRoom" class="board__copy" @click="copyToClipboard">
           {{ isCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на игру' }}
         </button>
         <div class="board__reaction">
@@ -117,11 +118,12 @@ onMounted(() => {
         :key="rowIndex" 
         class="board__row"
       >
-        <square-block 
+        <square-block
           v-for="(square, colIndex) in row" 
           :key="colIndex"
-          :value="square" 
+          :value="square"
           :val="rowIndex * boardSize + colIndex"
+          :is-win="!!winnigLine.includes(rowIndex * boardSize + colIndex)"
           @square-change="handleSquareClick(rowIndex * boardSize + colIndex)" 
         />
       </div> 

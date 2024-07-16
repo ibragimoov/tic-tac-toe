@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import notificationBlock from './components/notificationBlock.vue'
 import ReactNotification from './components/reactNotification.vue'
 import theHeader from './components/theHeader.vue'
 </script>
 
 <template>
-  <notification-block />
   <react-notification />
 
   <router-link to="/">

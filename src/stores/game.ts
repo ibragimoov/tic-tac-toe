@@ -12,10 +12,9 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
   const squares = ref<Array<SquareValue>>([] || Array(boardSize.value).fill(null))
   const isCurrentStepX = ref<Boolean>(true)
   const myMove = ref<'X' | 'O' | null>(null)
+  const winnigLine = ref<Array<number>>([])
 
   // computed
-  const allSquares = computed(() => squares.value)
-
   const winner = computed<WinnerValue>(() => {
     const winnerValue = calculateWinner(squares.value, boardSize.value)
     return winnerValue !== null ? (winnerValue === 'X' ? 'Крестик' : 'Нолик') : null
@@ -63,6 +62,7 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
   const restartGame = () => {
     squares.value = Array(boardSize.value * boardSize.value).fill(null)
     isCurrentStepX.value = true
+    winnigLine.value = []
   }
 
   const calculateWinner = (squares: Array<SquareValue>, size: number): string | null => {
@@ -105,6 +105,7 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
     for (const line of lines) {
       const result = checkLine(line)
       if (result) {
+        winnigLine.value = line
         return result
       }
     }
@@ -115,18 +116,17 @@ export const useTicTacToeStore = defineStore('tic-tac-toe', () => {
   return {
     squares,
     calculateWinner,
-    allSquares,
     updateSquares,
     setBoardState,
     restartGame,
     isCurrentStepX,
     winner,
     gameStatus,
-    currentPlayer,
     isDraw,
     gameOver,
     boardSize,
     myMove,
-    boardRows
+    boardRows,
+    winnigLine
   }
 })
